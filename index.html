@@ -23,22 +23,109 @@
                         <option value="wedding">Свадьба</option>
                         <option value="concert">Концерт</option>
                         <option value="party">Вечеринка</option>
+                        <option value="conference">Конференция</option>
+                        <option value="festival">Фестиваль</option>
+                        <option value="graduation">Выпускной</option>
                     </select>
                 </div>
 
                 <div class="form-group">
+                    <label>📅 Дата мероприятия:</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label>⏰ Время мероприятия:</label>
+                    <input type="time" id="eventTime" required>
+                </div>
+
+                <div class="form-group">
                     <label>💰 Бюджет (₽):</label>
-                    <input type="number" id="budget" placeholder="Например, 50000" required>
+                    <input type="number" id="budget" placeholder="Минимум 5 000 ₽" min="5000" required>
+                    <small class="hint">Минимальный бюджет — 5 000 ₽</small>
                 </div>
 
                 <div class="form-group">
                     <label>👥 Количество гостей:</label>
-                    <input type="number" id="guests" placeholder="10-500" required>
+                    <input type="number" id="guests" placeholder="От 5 до 3000" min="5" max="3000" required>
+                    <small class="hint">От 5 до 3000 человек</small>
                 </div>
 
                 <div class="form-group">
                     <label>🎨 Предпочтения / стиль:</label>
                     <input type="text" id="style" placeholder="Например: активный, классический, детский...">
+                </div>
+
+                <div class="form-group">
+                    <label>👶 Планируются ли дети?</label>
+                    <select id="hasChildren" required>
+                        <option value="no">Нет</option>
+                        <option value="yes">Да</option>
+                    </select>
+                </div>
+
+                <div id="childrenBlock" class="hidden">
+                    <div class="form-group">
+                        <label>🧸 Количество детей:</label>
+                        <input type="number" id="childrenCount" min="1" max="500" placeholder="Сколько детей?">
+                    </div>
+                    <div class="form-group">
+                        <label>🎈 Предпочтения по развлечениям для детей:</label>
+                        <select id="childrenEntertainment">
+                            <option value="none">Не выбрано</option>
+                            <option value="animator">Аниматор</option>
+                            <option value="masterclass">Мастер-класс</option>
+                            <option value="playzone">Игровая зона</option>
+                            <option value="bouncy">Батуты/горки</option>
+                            <option value="all">Всё вместе</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>🍽️ Тип меню:</label>
+                    <select id="menuType" required>
+                        <option value="regular">Обычное</option>
+                        <option value="vegetarian">Вегетарианское</option>
+                        <option value="both">Обычное + вегетарианское</option>
+                        <option value="halal">Халяль</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>⚠️ Есть ли аллергии?</label>
+                    <select id="hasAllergies" required>
+                        <option value="no">Нет</option>
+                        <option value="yes">Да</option>
+                    </select>
+                </div>
+
+                <div id="allergiesBlock" class="hidden">
+                    <div class="form-group">
+                        <label>🥜 Какие аллергии?</label>
+                        <textarea id="allergiesText" rows="2" placeholder="Например: орехи, молочные продукты, глютен, морепродукты..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>🎵 Предпочтения по музыке:</label>
+                    <select id="musicPreference">
+                        <option value="pop">Поп-музыка</option>
+                        <option value="rock">Рок</option>
+                        <option value="electronic">Электронная</option>
+                        <option value="jazz">Джаз / Lounge</option>
+                        <option value="classical">Классическая</option>
+                        <option value="russian">Русская эстрада</option>
+                        <option value="mixed">Микс (разные жанры)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>🍷 Алкоголь:</label>
+                    <select id="alcohol" required>
+                        <option value="yes">С алкоголем</option>
+                        <option value="no">Без алкоголя</option>
+                    </select>
                 </div>
 
                 <button type="submit">✨ Создать сценарий</button>
