@@ -9,7 +9,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>🤖 Нейро-организатор</h1>
+            <div class="header-icon">🤖✨</div>
+            <h1>Нейро-организатор</h1>
             <p>Ваш AI-помощник в планировании праздников</p>
         </header>
 
@@ -18,20 +19,28 @@
                 <div class="form-group">
                     <label>🎉 Тип мероприятия:</label>
                     <select id="eventType" required>
-                        <option value="birthday">День рождения</option>
-                        <option value="corporate">Корпоратив</option>
-                        <option value="wedding">Свадьба</option>
-                        <option value="concert">Концерт</option>
-                        <option value="party">Вечеринка</option>
-                        <option value="conference">Конференция</option>
-                        <option value="festival">Фестиваль</option>
-                        <option value="graduation">Выпускной</option>
+                        <option value="birthday">🎂 День рождения</option>
+                        <option value="corporate">💼 Корпоратив</option>
+                        <option value="wedding">💍 Свадьба</option>
+                        <option value="concert">🎤 Концерт</option>
+                        <option value="party">🎉 Вечеринка</option>
+                        <option value="conference">📊 Конференция</option>
+                        <option value="festival">🎪 Фестиваль</option>
+                        <option value="graduation">🎓 Выпускной</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>🏟️ Локация:</label>
+                    <select id="location" required>
+                        <option value="">Сначала выберите тип мероприятия</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label>📅 Дата мероприятия:</label>
                     <input type="date" id="eventDate" required>
+                    <small class="hint" id="dateHint">❌ Нельзя выбрать сегодняшний день</small>
                 </div>
 
                 <div class="form-group">
@@ -70,14 +79,14 @@
                         <input type="number" id="childrenCount" min="1" max="500" placeholder="Сколько детей?">
                     </div>
                     <div class="form-group">
-                        <label>🎈 Предпочтения по развлечениям для детей:</label>
+                        <label>🎈 Развлечения для детей:</label>
                         <select id="childrenEntertainment">
                             <option value="none">Не выбрано</option>
-                            <option value="animator">Аниматор</option>
-                            <option value="masterclass">Мастер-класс</option>
-                            <option value="playzone">Игровая зона</option>
-                            <option value="bouncy">Батуты/горки</option>
-                            <option value="all">Всё вместе</option>
+                            <option value="animator">🎪 Аниматор</option>
+                            <option value="masterclass">🎨 Мастер-класс</option>
+                            <option value="playzone">🧸 Игровая зона</option>
+                            <option value="bouncy">🤸 Батуты/горки</option>
+                            <option value="all">🎉 Всё вместе</option>
                         </select>
                     </div>
                 </div>
@@ -85,10 +94,10 @@
                 <div class="form-group">
                     <label>🍽️ Тип меню:</label>
                     <select id="menuType" required>
-                        <option value="regular">Обычное</option>
-                        <option value="vegetarian">Вегетарианское</option>
-                        <option value="both">Обычное + вегетарианское</option>
-                        <option value="halal">Халяль</option>
+                        <option value="regular">🍖 Обычное</option>
+                        <option value="vegetarian">🥗 Вегетарианское</option>
+                        <option value="both">🍖🥗 Обычное + вегетарианское</option>
+                        <option value="halal">🕌 Халяль</option>
                     </select>
                 </div>
 
@@ -103,20 +112,20 @@
                 <div id="allergiesBlock" class="hidden">
                     <div class="form-group">
                         <label>🥜 Какие аллергии?</label>
-                        <textarea id="allergiesText" rows="2" placeholder="Например: орехи, молочные продукты, глютен, морепродукты..."></textarea>
+                        <textarea id="allergiesText" rows="2" placeholder="Например: орехи, молочные продукты, глютен..."></textarea>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>🎵 Предпочтения по музыке:</label>
                     <select id="musicPreference">
-                        <option value="pop">Поп-музыка</option>
-                        <option value="rock">Рок</option>
-                        <option value="electronic">Электронная</option>
-                        <option value="jazz">Джаз / Lounge</option>
-                        <option value="classical">Классическая</option>
-                        <option value="russian">Русская эстрада</option>
-                        <option value="mixed">Микс (разные жанры)</option>
+                        <option value="pop">🎤 Поп-музыка</option>
+                        <option value="rock">🎸 Рок</option>
+                        <option value="electronic">🪩 Электронная</option>
+                        <option value="jazz">🎷 Джаз / Lounge</option>
+                        <option value="classical">🎻 Классическая</option>
+                        <option value="russian">🎵 Русская эстрада</option>
+                        <option value="mixed">🎧 Микс жанров</option>
                     </select>
                 </div>
 
@@ -128,7 +137,21 @@
                     </select>
                 </div>
 
-                <button type="submit">✨ Создать сценарий</button>
+                <div id="alcoholBlock" class="hidden">
+                    <div class="form-group">
+                        <label>🍾 Выберите напитки:</label>
+                        <div class="checkbox-group" id="alcoholOptions">
+                            <label><input type="checkbox" value="vodka"> 🥃 Водка</label>
+                            <label><input type="checkbox" value="wine"> 🍷 Вино</label>
+                            <label><input type="checkbox" value="champagne"> 🥂 Шампанское</label>
+                            <label><input type="checkbox" value="beer"> 🍺 Пиво</label>
+                            <label><input type="checkbox" value="whiskey"> 🥃 Виски</label>
+                            <label><input type="checkbox" value="cocktails"> 🍹 Коктейли</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">✨ Создать сценарий</button>
             </form>
 
             <div id="result" class="result hidden">
