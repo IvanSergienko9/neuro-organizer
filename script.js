@@ -77,7 +77,7 @@ function generatePhone() {
     return phones[Math.floor(Math.random() * phones.length)];
 }
 
-// ========== Логика обновления локаций ==========
+// ========== Обновление локаций при выборе типа мероприятия ==========
 document.getElementById('eventType').addEventListener('change', function() {
     const eventType = this.value;
     const locationSelect = document.getElementById('location');
@@ -93,7 +93,7 @@ document.getElementById('eventType').addEventListener('change', function() {
     }
 });
 
-// ========== Динамическая проверка даты с исчезновением ошибки ==========
+// ========== Динамическая валидация даты ==========
 const dateInput = document.getElementById('eventDate');
 const dateHint = document.getElementById('dateHint');
 
@@ -148,7 +148,16 @@ document.getElementById('alcohol').addEventListener('change', function() {
     document.getElementById('alcoholBlock').classList.toggle('hidden', this.value !== 'yes');
 });
 
-// ========== Проверка даты (для отправки) ==========
+// ========== Инициализация: скрыть блок алкоголя, если выбрано "Без алкоголя" ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const alcoholSelect = document.getElementById('alcohol');
+    const alcoholBlock = document.getElementById('alcoholBlock');
+    if (alcoholSelect.value === 'no') {
+        alcoholBlock.classList.add('hidden');
+    }
+});
+
+// ========== Проверка даты перед отправкой ==========
 function checkDateForSubmit(dateString) {
     const selectedDate = new Date(dateString);
     const today = new Date();
@@ -157,32 +166,23 @@ function checkDateForSubmit(dateString) {
     if (selectedDate.getTime() === today.getTime()) {
         return { valid: false, warning: '❌ Нельзя организовать мероприятие сегодня! Выберите другой день.' };
     }
-    
     if (selectedDate < today) {
         return { valid: false, warning: '❌ Нельзя выбрать дату в прошлом!' };
     }
-    
     const diffDays = Math.ceil((selectedDate - today) / (1000 * 60 * 60 * 24));
     let warning = null;
     if (diffDays < 7) {
         warning = '⏰ ВНИМАНИЕ: До мероприятия меньше недели! Может не хватить времени на подготовку.';
     }
-    
     return { valid: true, warning };
 }
 
-// ========== Исправленная проверка бюджета ==========
+// ========== Проверка бюджета (только при реальном превышении) ==========
 function checkBudget(budget, costs) {
+    let total = Object.values(costs).reduce((sum, cost) => sum + cost, 0);
     let warnings = [];
-    let total = 0;
-    
-    for (const cost of Object.values(costs)) {
-        total += cost;
-    }
-    
     if (total > budget) {
         warnings.push(`💰 Общая стоимость (${total.toLocaleString()} ₽) превышает бюджет (${budget.toLocaleString()} ₽) на ${(total - budget).toLocaleString()} ₽`);
-        
         for (const [item, cost] of Object.entries(costs)) {
             if (cost > budget) {
                 warnings.push(`❌ ${item} (${cost.toLocaleString()} ₽) дороже всего бюджета!`);
@@ -191,7 +191,6 @@ function checkBudget(budget, costs) {
     } else {
         warnings.push(`✅ Бюджет позволяет реализовать все пункты. Остаток: ${(budget - total).toLocaleString()} ₽`);
     }
-    
     return { warnings, total };
 }
 
@@ -212,18 +211,16 @@ function generateScenario(data) {
 
     const formattedDate = new Date(eventDate).toLocaleDateString('ru-RU');
     
-    // Расчёты стоимости (от общего бюджета, не почасово)
+    // Расчёты стоимости (от общего бюджета)
     const perPersonBudget = budget / guests;
     const foodCost = Math.min(Math.round(budget * 0.4), budget);
     const entertainmentCost = Math.min(Math.round(budget * 0.25), budget - foodCost);
     const decorCost = Math.min(Math.round(budget * 0.1), budget - foodCost - entertainmentCost);
     const musicCost = Math.min(Math.round(budget * 0.1), budget - foodCost - entertainmentCost - decorCost);
-    const animatorCost = (hasChildren === 'yes' && childrenEntertainment !== 'none') ? Math.min(30000, budget * 0.15) : 0;
-    const alcoholCost = (alcohol === 'yes') ? Math.min(Math.round(budget * 0.05), budget * 0.1) : 0;
-    
-    // Стоимость специалистов от общего бюджета
     const hostCost = Math.round(budget * 0.08);
     const photographerCost = Math.round(budget * 0.1);
+    const animatorCost = (hasChildren === 'yes' && childrenEntertainment !== 'none') ? Math.min(30000, budget * 0.15) : 0;
+    const alcoholCost = (alcohol === 'yes') ? Math.min(Math.round(budget * 0.05), budget * 0.1) : 0;
     
     const costs = {
         'Питание': foodCost,
@@ -240,7 +237,7 @@ function generateScenario(data) {
     
     // Детская секция
     let childrenSection = '';
-    if (hasChildren === 'yes') {
+    if (hasChildren === 'yes' && childrenEntertainment !== 'none') {
         const entertainmentMap = {
             'animator': '🎪 Аниматор', 'masterclass': '🎨 Мастер-класс',
             'playzone': '🧸 Игровая зона', 'bouncy': '🤸 Батуты/горки',
@@ -251,7 +248,7 @@ function generateScenario(data) {
             <div class="menu-card">
                 <h4>${entertainmentMap[childrenEntertainment]}</h4>
                 <p>👧 Количество детей: ${childrenCount}</p>
-                <p>💰 Стоимость: ${animatorCost > 0 ? animatorCost.toLocaleString() + ' ₽' : 'не выделена'}</p>
+                <p>💰 Стоимость: ${animatorCost.toLocaleString()} ₽</p>
             </div>
         `;
     }
@@ -262,7 +259,6 @@ function generateScenario(data) {
         <h3>🍽️ ${menu.name}</h3>
         <div class="menu-grid">
     `;
-    
     menu.items.forEach((item) => {
         menuHTML += `
             <div class="menu-card">
@@ -273,7 +269,6 @@ function generateScenario(data) {
             </div>
         `;
     });
-    
     menuHTML += `</div><small>💡 Снимите галочку, чтобы исключить блюдо из меню</small>`;
     
     // Алкоголь
@@ -300,11 +295,11 @@ function generateScenario(data) {
     let budgetHTML = '';
     if (warnings.some(w => w.includes('превышает'))) {
         budgetHTML = `<div class="budget-warning">⚠️ ${warnings.filter(w => w.includes('превышает')).join('<br>')}</div>`;
-    } else if (warnings.some(w => w.includes('✅'))) {
-        budgetHTML = `<div class="budget-warning budget-success">✅ ${warnings.filter(w => w.includes('✅'))[0]}</div>`;
+    } else {
+        budgetHTML = `<div class="budget-warning budget-success">✅ ${warnings[0]}</div>`;
     }
     
-    // Генерация телефонов
+    // Телефоны
     const hostPhone = generatePhone();
     const photographerPhone = generatePhone();
     const animatorPhone = generatePhone();
@@ -355,7 +350,7 @@ function generateScenario(data) {
             </div>` : ''}
         </div>
         
-        ${hasAllergies === 'yes' && allergiesText !== 'нет' ? `<div class="menu-card"><p><strong>⚠️ Учитываем аллергии:</strong> ${allergiesText}</p></div>` : ''}
+        ${hasAllergies === 'yes' && allergiesText.trim() !== '' ? `<div class="menu-card"><p><strong>⚠️ Учитываем аллергии:</strong> ${allergiesText}</p></div>` : ''}
         
         <p><em>✨ Сценарий сгенерирован нейросетью на основе ваших предпочтений.</em></p>
     `;
@@ -382,7 +377,7 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     const musicPreference = document.getElementById('musicPreference').value;
     const alcohol = document.getElementById('alcohol').value;
     
-    // Сбор алкоголя
+    // Сбор выбранных алкогольных напитков
     const alcoholChoices = [];
     if (alcohol === 'yes') {
         document.querySelectorAll('#alcoholOptions input:checked').forEach(cb => {
@@ -403,13 +398,11 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
         alert('⚠️ Пожалуйста, выберите дату мероприятия!');
         return;
     }
-    
     const dateCheck = checkDateForSubmit(eventDate);
     if (!dateCheck.valid) {
         alert(dateCheck.warning);
         return;
     }
-    
     if (!eventTime) {
         alert('⚠️ Пожалуйста, выберите время мероприятия!');
         return;
@@ -460,7 +453,7 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     }, 2000);
 });
 
-// Копирование
+// Копирование текста
 document.getElementById('copyBtn').addEventListener('click', function() {
     const text = document.getElementById('scenarioText').innerText;
     navigator.clipboard.writeText(text);

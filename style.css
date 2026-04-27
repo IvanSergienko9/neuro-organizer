@@ -108,6 +108,10 @@ input:focus, select:focus, textarea:focus {
     color: #10b981;
 }
 
+.hint.time-warning {
+    color: #d97706;
+}
+
 .checkbox-group {
     display: flex;
     flex-wrap: wrap;
@@ -249,16 +253,6 @@ footer {
     background: #dcfce7;
     color: #166534;
     border-left-color: #10b981;
-}
-
-.time-warning {
-    color: #d97706;
-    font-weight: bold;
-    margin: 12px 0;
-    padding: 12px;
-    background: #fed7aa;
-    border-radius: 16px;
-    border-left: 4px solid #d97706;
 }
 
 .menu-grid {
